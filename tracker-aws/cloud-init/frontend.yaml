@@ -1,0 +1,86 @@
+#cloud-config
+users:
+  - default
+
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+packages:
+  - nginx
+
+write_files:
+  - path: /etc/nginx/nginx.conf
+    permissions: "0644"
+    defer: true
+    content: |
+      user nginx;
+      worker_processes auto;
+      error_log /var/log/nginx/error.log notice;
+      pid /run/nginx.pid;
+
+      include /usr/share/nginx/modules/*.conf;
+
+      events {
+          worker_connections 1024;
+      }
+
+      http {
+          log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                            '$status $body_bytes_sent "$http_referer" '
+                            '"$http_user_agent" "$http_x_forwarded_for"';
+
+          access_log  /var/log/nginx/access.log  main;
+
+          sendfile            on;
+          tcp_nopush          on;
+          keepalive_timeout   65;
+          types_hash_max_size 4096;
+
+          include             /etc/nginx/mime.types;
+          default_type        application/octet-stream;
+
+          include /etc/nginx/conf.d/*.conf;
+
+          server {
+              listen       80;
+              listen       [::]:80;
+              server_name  _;
+              root         /usr/share/nginx/html;
+
+              listen 443 ssl default_server;
+              listen [::]:443 ssl default_server;
+
+              ssl_certificate         /etc/pki/ca-trust/source/anchors/relyq.dev/cert.pem;
+              ssl_certificate_key     /etc/pki/ca-trust/source/anchors/relyq.dev/privkey.pem;
+              ssl_protocols           TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+              ssl_ciphers             HIGH:!aNULL:!MD5;
+
+              include /etc/nginx/default.d/*.conf;
+
+              location / {
+                      root html;
+                      index index.html index.htm;
+                      try_files $uri $uri/ /index.html;
+              }
+
+              error_page 404 /404.html;
+              location = /404.html {
+              }
+
+              error_page 500 502 503 504 /50x.html;
+              location = /50x.html {
+              }
+          }
+      }
+
+runcmd:
+  - aws s3 cp --region us-east-1 s3://relyq-tracker-bucket/frontend/frontend.tar.gz /home/ec2-user/
+  - mkdir /home/ec2-user/build
+  - tar -xf /home/ec2-user/frontend.tar.gz -C /home/ec2-user/build/
+  - rm -rf /usr/share/nginx/html/
+  - mv /home/ec2-user/build/tracker/ /usr/share/nginx/html/
+  - chmod +x /home/ec2-user/build/post_install.sh
+  - /home/ec2-user/build/post_install.sh
+  - rm -rf /home/ec2-user/build
+  - rm -rf /home/ec2-user/frontend.tar.gz
+  - systemctl start nginx

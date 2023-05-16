@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  nginx:
+    image: "tracker-nginx"
+    volumes:
+      - "${TRACKER_CERT_PATH}:/etc/ssl/"
+    ports:
+      - "80:80"
+      - "443:443"
+  api:
+    image: "tracker-dotnet"
+    ports:
+      - "7004:7004"
+    volumes:
+      - "${TRACKER_CERT_PATH}:/etc/ssl/"
+    environment:
+      - ASPNETCORE_URLS=https://+:7004
+      - ASPNETCORE_HTTPS_PORT=7004
+      - ASPNETCORE_CONTENTROOT=/publish
+      - ASPNETCORE_ENVIRONMENT
+      - Secrets__SQLConnection
+      - Jwt__Key
+      - Secrets__SMTPPassword
+      - Tracker__BaseUrl

@@ -1,0 +1,23 @@
+#cloud-config
+users:
+  - default
+  - name: tracker
+    homedir: /opt/tracker
+    shell: /bin/bash
+    ssh_redirect_user: true
+
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+packages:
+  - cronie
+  - libicu
+
+runcmd:
+  - aws s3 cp --region us-east-1 s3://relyq-tracker-bucket/api/api.tar.gz /home/ec2-user/
+  - mkdir /home/ec2-user/build
+  - tar -xf /home/ec2-user/api.tar.gz -C /home/ec2-user/build/
+  - mv /home/ec2-user/build/publish/ /opt/tracker/api
+  - chmod +x /home/ec2-user/build/post_install.sh
+  - /home/ec2-user/build/post_install.sh
+  - systemctl start tracker
