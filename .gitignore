@@ -33,6 +33,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+.vscode/
+
 ansible_roles/
 minecraft/
 tracker-aws-docker/
