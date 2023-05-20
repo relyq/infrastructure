@@ -74,13 +74,13 @@ write_files:
       }
 
 runcmd:
-  - aws s3 cp --region us-east-1 s3://relyq-tracker-bucket/frontend/frontend.tar.gz /home/ec2-user/
-  - mkdir /home/ec2-user/build
-  - tar -xf /home/ec2-user/frontend.tar.gz -C /home/ec2-user/build/
+  - aws s3 cp --region us-east-1 s3://relyq-tracker-bucket/frontend/frontend.tar.gz /tmp/
+  - mkdir /tmp/build
+  - tar -xf /tmp/frontend.tar.gz -C /tmp/build/
   - rm -rf /usr/share/nginx/html/
-  - mv /home/ec2-user/build/tracker/ /usr/share/nginx/html/
-  - chmod +x /home/ec2-user/build/post_install.sh
-  - /home/ec2-user/build/post_install.sh
-  - rm -rf /home/ec2-user/build
-  - rm -rf /home/ec2-user/frontend.tar.gz
+  - mv /tmp/build/tracker/ /usr/share/nginx/html/
+  - chmod +x /tmp/build/post_install.sh
+  - /tmp/build/post_install.sh
+  - rm -rf /tmp/build
+  - rm -rf /tmp/frontend.tar.gz
   - systemctl start nginx
