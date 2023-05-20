@@ -64,12 +64,13 @@ data "cloudinit_config" "api_config" {
     content_type = "text/x-shellscript"
     content      = <<-EOT
     #!/bin/bash
-    crontab -l -u tracker > /home/ec2-user/cron_tracker
-    echo -e "Secrets__JanitorPassword='${data.aws_ssm_parameter.tracker-janitor_password.value}'" >> /home/ec2-user/cron_tracker
-    echo -e "Tracker__BaseUrl='https:--aws\x2dtracker\x2dapi.relyq.dev:7004'" >> /home/ec2-user/cron_tracker
-    echo -e "@daily /usr/bin/python3 /opt/tracker/api/scripts/demo_clean.py" >> /home/ec2-user/cron_tracker
-    crontab -u tracker /home/ec2-user/cron_tracker
-    rm /home/ec2-user/cron_tracker
+    HOME_DIR=/opt/tracker
+    crontab -l -u tracker > $HOME_DIR/cron_tracker
+    echo -e "Secrets__JanitorPassword='${data.aws_ssm_parameter.tracker-janitor_password.value}'" >> $HOME_DIR/cron_tracker
+    echo -e "Tracker__BaseUrl='https:--aws\x2dtracker\x2dapi.relyq.dev:7004'" >> $HOME_DIR/cron_tracker
+    echo -e "@daily /usr/bin/python3 /opt/tracker/api/scripts/demo_clean.py" >> $HOME_DIR/cron_tracker
+    crontab -u tracker $HOME_DIR/cron_tracker
+    rm $HOME_DIR/cron_tracker
     EOT
   }
 
