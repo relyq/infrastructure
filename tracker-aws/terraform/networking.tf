@@ -159,7 +159,7 @@ resource "porkbun_dns_record" "frontend_dns" {
   ttl     = "600"
 
   lifecycle {
-    replace_triggered_by = [ aws_instance.frontend_server.public_ip ]
+    replace_triggered_by = [aws_instance.frontend_server.public_ip]
   }
 }
 
@@ -172,6 +172,6 @@ resource "porkbun_dns_record" "api_dns" {
   ttl     = "600"
 
   lifecycle {
-    replace_triggered_by = [ aws_instance.api_server.public_ip ]
+    replace_triggered_by = [aws_instance.api_server.public_ip]
   }
 }
