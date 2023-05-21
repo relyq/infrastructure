@@ -1,0 +1,23 @@
+#cloud-config
+users:
+  - default
+  - name: tracker
+    homedir: /opt/tracker
+    shell: /bin/bash
+    ssh_redirect_user: true
+
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+packages:
+  - cronie
+  - docker
+
+runcmd:
+  - mkdir -p /usr/local/lib/docker/cli-plugins/
+  - curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
+  - chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+  - aws s3 cp s3://relyq-tracker-bucket/docker-compose.yml /opt/tracker/docker-compose.yml
+  - export TRACKER_CERT_PATH='/etc/pki/ca-trust/source/anchors/relyq.dev'
+  - source /root/.tracker.env
+  - docker compose -f /opt/tracker/docker-compose.yml up -d
