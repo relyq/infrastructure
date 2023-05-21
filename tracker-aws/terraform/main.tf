@@ -67,7 +67,7 @@ data "cloudinit_config" "api_config" {
     HOME_DIR=/opt/tracker
     crontab -l -u tracker > $HOME_DIR/cron_tracker
     echo -e "Secrets__JanitorPassword='${data.aws_ssm_parameter.tracker-janitor_password.value}'" >> $HOME_DIR/cron_tracker
-    echo -e "Tracker__BaseUrl='https:--aws\x2dtracker\x2dapi.relyq.dev:7004'" >> $HOME_DIR/cron_tracker
+    echo -e "Tracker__BaseUrl='https://aws\x2dtracker\x2dapi.relyq.dev:7004'" >> $HOME_DIR/cron_tracker
     echo -e "@daily /usr/bin/python3 /opt/tracker/api/scripts/demo_clean.py" >> $HOME_DIR/cron_tracker
     crontab -u tracker $HOME_DIR/cron_tracker
     rm $HOME_DIR/cron_tracker
