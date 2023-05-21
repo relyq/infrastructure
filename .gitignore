@@ -37,4 +37,3 @@ terraform.rc
 
 ansible_roles/
 minecraft/
-tracker-aws-docker/
