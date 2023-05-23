@@ -1,14 +1,14 @@
 version: "3.9"
 services:
   nginx:
-    image: "350212826411.dkr.ecr.us-east-1.amazonaws.com/tracker-nginx:latest"
+    image: "relyq/tracker-nginx:master"
     volumes:
       - "${TRACKER_CERT_PATH}:/etc/ssl/"
     ports:
       - "80:80"
       - "443:443"
   api:
-    image: "350212826411.dkr.ecr.us-east-1.amazonaws.com/tracker-dotnet:latest"
+    image: "relyq/tracker-dotnet:master"
     ports:
       - "7004:7004"
     volumes:
