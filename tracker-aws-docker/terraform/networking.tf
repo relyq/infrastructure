@@ -50,7 +50,7 @@ resource "aws_security_group" "allow_ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["186.19.138.214/32"]
+    cidr_blocks = ["0.0.0.0/0"] # gh-actions ci/cd uses ssh. password auth is disabled
   }
 
   tags = {
