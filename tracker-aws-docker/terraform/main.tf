@@ -41,6 +41,11 @@ data "aws_key_pair" "kp_l14-ed25519" {
   include_public_key = true
 }
 
+data "aws_key_pair" "kp_gh-actions" {
+  key_pair_id        = "key-0b35fb14992ee1c5f"
+  include_public_key = true
+}
+
 data "aws_acm_certificate" "cert_relyq_dev" {
   domain = "*.relyq.dev"
 }
@@ -48,14 +53,6 @@ data "aws_acm_certificate" "cert_relyq_dev" {
 data "aws_s3_object" "s3_demo_clean" {
   bucket = "relyq-tracker-bucket"
   key    = "demo_clean.py"
-}
-
-data "aws_ecr_repository" "dotnet" {
-  name = "tracker-dotnet"
-}
-
-data "aws_ecr_repository" "nginx" {
-  name = "tracker-nginx"
 }
 
 data "cloudinit_config" "config" {
@@ -76,6 +73,7 @@ data "cloudinit_config" "config" {
     content      = <<-EOT
               #!/bin/bash
               ENV_PATH=/root/.tracker.env
+              echo "export TRACKER_CERT_PATH='/etc/pki/ca-trust/source/anchors/relyq.dev'" >> $ENV_PATH
               echo "export ASPNETCORE_URLS='https://+:7004'" >> $ENV_PATH
               echo "export ASPNETCORE_HTTPS_PORT='7004'" >> $ENV_PATH
               echo "export ASPNETCORE_ENVIRONMENT='Production'" >> $ENV_PATH
@@ -106,15 +104,13 @@ data "cloudinit_config" "config" {
   }
 
   part {
-    filename     = "docker_pull.sh"
+    filename     = "add_cicd_kp.sh"
     content_type = "text/x-shellscript"
     content      = <<-EOT
-              #!/bin/bash
-              aws ecr get-login-password --region ${data.aws_region.current.name} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com
-              systemctl start docker
-              docker pull ${data.aws_ecr_repository.dotnet.repository_url}:latest
-              docker pull ${data.aws_ecr_repository.nginx.repository_url}:latest
-              EOT
+          #!/bin/bash
+          HOME_DIR=/home/ec2-user
+          echo "${data.aws_key_pair.kp_gh-actions.public_key}" >> $HOME_DIR/.ssh/authorized_keys
+          EOT
   }
 
   part {
