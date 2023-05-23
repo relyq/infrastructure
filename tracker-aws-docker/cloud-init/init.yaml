@@ -18,6 +18,8 @@ runcmd:
   - curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
   - chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
   - aws s3 cp s3://relyq-tracker-bucket/docker-compose.yml /opt/tracker/docker-compose.yml
-  - export TRACKER_CERT_PATH='/etc/pki/ca-trust/source/anchors/relyq.dev'
+  - aws s3 cp s3://relyq-tracker-bucket/docker_update.sh /opt/tracker/docker_update.sh
+  - chmod +x /opt/tracker/docker_update.sh
   - source /root/.tracker.env
+  - systemctl start docker
   - docker compose -f /opt/tracker/docker-compose.yml up -d
