@@ -4,12 +4,12 @@ metadata:
   name: nginx-ingress
   namespace: nginx
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod-dns
+    cert-manager.io/cluster-issuer: letsencrypt-dns
 spec:
   ingressClassName: traefik
   tls:
   - hosts:
-    - x.relyq.dev
+    - x.relyq.dev/
     secretName: nginx-tls
   rules:
   - host: x.relyq.dev
