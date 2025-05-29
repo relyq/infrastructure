@@ -9,7 +9,7 @@ spec:
   ingressClassName: traefik
   tls:
   - hosts:
-    - x.relyq.dev/
+    - x.relyq.dev
     secretName: nginx-tls
   rules:
   - host: x.relyq.dev
