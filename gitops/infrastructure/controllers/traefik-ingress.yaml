@@ -43,3 +43,4 @@ spec:
     additionalArguments:
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--providers.kubernetesingress.namespace=traefik-ingress,nginx"
