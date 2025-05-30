@@ -1,3 +1,11 @@
-- op: replace
-  path: /spec/template/spec/volumes/0/configMap/name
-  value: html-production
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-web
+spec:
+  template:
+    spec:
+      volumes:
+        - name: html
+          configMap:
+            name: html-production
