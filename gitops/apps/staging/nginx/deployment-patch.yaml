@@ -1,3 +1,13 @@
-- op: replace
-  path: /spec/template/spec/volumes/0/configMap/name
-  value: html-staging
+# vscode-kubernetes-tools: exclude
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-web
+  namespace: nginx
+spec:
+  template:
+    spec:
+      volumes:
+        - name: html
+          configMap:
+            name: html-staging
