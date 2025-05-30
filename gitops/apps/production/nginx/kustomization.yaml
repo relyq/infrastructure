@@ -2,18 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: nginx
 resources:
-  - ../base/nginx
+  - ../../base/nginx
   - website-configmap.yaml
-patches:
-  - target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: nginx-web
-    path: deployment-patch.yaml
-  - target:
-      group: networking.k8s.io
-      version: v1
-      kind: Ingress
-      name: nginx-ingress
-    path: ingress-patch.yaml
+patchesStrategicMerge:
+  - deployment-patch.yaml
+  - ingress-patch.yaml
